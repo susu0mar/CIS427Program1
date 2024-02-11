@@ -118,7 +118,8 @@ def buy_command(conn, command):
 
 #Brooklyn
 def sell_command(comm, stock_sym, stock_amo, prc, id):
-    data = "200 OK\n" + command + " " + stock_sym + " " + stock_amo + "\ " + price + " " + user_id + "\n"
+    data = "200 OK\n" + comm + " " + stock_sym + " " + stock_amo + "\ " + prc + " " + id + "\n"
+    print ("testing git")
     return (data)
 
 #Souad
