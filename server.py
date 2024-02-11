@@ -176,14 +176,20 @@ def recv_all(sock, delimiter = '/n'):
         #Join all chunks into a string and remove delimiter
         return ''.join(data).rstrip(delimiter)
 
-
+count = 0 #use this var so that welcome message only sent once
 #this loop runs until a connection is established
+
+#FIXME: SERVER COMMAND RUNS ONLY ONCE, I THINK IT PREMATURLY CLOSES CAUSING CONNECTION ERROR
 while True:
     clientsocket, address = s.accept()
-    print(f"Connection from {address} Successfully Established")#message to check if connection worked
-    #sending string to client
-    message_welcome = "Welcome to this Stock Trading Program\n"
-    clientsocket.send(message_welcome.encode())
+
+    if count ==0:
+     count +=1
+     print(f"Connection from {address} Successfully Established")#message to check if connection worked
+     #sending string to client
+    
+     message_welcome = "Welcome to this Stock Trading Program\n"
+     clientsocket.send(message_welcome.encode())
     
     #Receive a command from the client
     client_message = recv_all(clientsocket)
@@ -198,5 +204,6 @@ while True:
 
     # Send the response to the client
     clientsocket.sendall(response.encode())
-    #close connection
-    clientsocket.close()
+
+#close connection
+clientsocket.close()

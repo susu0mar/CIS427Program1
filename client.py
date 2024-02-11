@@ -39,7 +39,7 @@ def recv_all(sock, delimiter = '/n'):
 
 #Seems like this block isn't running?? but for some reason 
 while True:
-            # Prompt the user for a command
+          # Prompt the user for a command
             command = input("Enter command (BUY, SELL, BALANCE, LIST, SHUTDOWN, QUIT): ").strip()
             if command.upper() == "QUIT":  # If user enters QUIT, break the loop
                 print("Exiting the client.")
