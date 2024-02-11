@@ -1,9 +1,11 @@
 #This is file for all server operatons
 import socket
-#might use sqlite3 library to create simple db for stocks
+#Use sqlite3 library to create simple db for stocks
 import sqlite3
 
 #IF DB doesn't work, worst case just use .txt files instead
+
+
 # Connect to SQLite database
 with sqlite3.connect('stock_trading_system.db') as conn:
     cursor = conn.cursor() #create a cursor object to execute SQL commands
@@ -34,7 +36,7 @@ with sqlite3.connect('stock_trading_system.db') as conn:
     ''')
 
     conn.commit()
-
+#
 #TODO: Need to Figure out how to add to database based on different client commands
 #also need to add initial data (like have 1 or 2 initial users and some stocks)
 
@@ -48,9 +50,9 @@ s.listen()
 #this loop runs until a connection is established
 while True:
     clientsocket, address = s.accept()
-    print(f"Connection Successfully Established")#message to check if connection worked
+    print(f"Connection from {address} Successfully Established")#message to check if connection worked
     #sending string to client
-    message_test = "Hello World! "
+    message_test = "Welcome to this Stock Trading Program\n"
     clientsocket.send(message_test.encode())
 
     #close connection
