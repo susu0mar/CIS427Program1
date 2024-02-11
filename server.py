@@ -39,6 +39,37 @@ with sqlite3.connect('stock_trading_system.db') as conn:
 #
 #TODO: Need to Figure out how to add to database based on different client commands
 #also need to add initial data (like have 1 or 2 initial users and some stocks)
+    
+#Souad
+def buy_command(comm, stock_sym, stock_amo, prc, id):
+    data = "200 OK\n" + command + " " + stock_sym + " " + stock_amo + " " + price + " " + user_id + "\n"
+    return (data)
+
+#Brooklyn
+def sell_command(comm, stock_sym, stock_amo, prc, id):
+    data = "200 OK\n" + command + " " + stock_sym + " " + stock_amo + "\ " + price + " " + user_id + "\n"
+    return (data)
+
+#Souad
+def list_command(comm):
+    data = "200 OK\n" + comm + "\n"
+    return (data)
+
+#Brooklyn
+def balance_command(comm):
+    data = "200 OK\n" + comm + "\n"
+    return (data)
+
+#Souad
+def shutdown_command(comm):
+    data = "200 OK\n" + comm + "\n"
+    return (data)
+
+#Brooklyn
+def quit_command(comm):
+    data = "200 OK\n"
+    return (data)
+
 
 
 #creating socket object which is ipv4 & uses TCP
