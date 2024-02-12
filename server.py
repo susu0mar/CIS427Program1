@@ -161,9 +161,28 @@ def sell_command(conn, command):
     return f"200 OK\nSOLD: New balance: {new_stock_balance} {stock_symbol}. USD balance ${new_usd_balance}"
 
 #Souad
-def list_command(comm):
-    data = "200 OK\n" + comm + "\n"
-    return (data)
+def list_command(conn, command):
+    parts = command.split() 
+    #if user provided user id, use it, else defualt user id is 1
+    user_id = parts[1] if len(parts) > 1 else '1'
+
+    cursor = conn.cursor()
+
+    #execute query from DB to retrieve data
+    cursor.execute("SELECT ID, stock_symbol, stock_balance, user_id FROM stocks WHERE user_id = ?", (user_id,))
+    stocks = cursor.fetchall()
+
+    if not stocks:
+        return f"200 OK\nNo stocks found for user {user_id}."
+
+    #creating response string
+    response = f"200 OK\nThe list of records in the Stocks database for user {user_id}:\n"
+    for stock in stocks:
+        stock_id, symbol, balance, user_id = stock
+        response += f"{stock_id} {symbol} {balance} {user_id}\n"
+
+    return response
+   
 
 #Brooklyn
 def balance_command(comm):
@@ -240,6 +259,8 @@ while True:
             response = buy_command(conn, client_message)
         elif client_message.startswith("SELL"):
             response = sell_command(conn, client_message)
+        elif client_message.startswith("LIST"):
+            response = list_command(conn, client_message)
      #TODO:Need to add for the other commands!!!!!    
         else:
          response = "Error: Invalid command."
