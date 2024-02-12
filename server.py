@@ -185,9 +185,28 @@ def list_command(conn, command):
    
 
 #Brooklyn
-def balance_command(comm):
-    data = "200 OK\n" + comm + "\n"
-    return (data)
+def balance_command(conn, command):
+    _, user_id = command.split()
+
+    #should user number be read in or set? right now its read in
+    user_id = int(user_id)
+
+    cursor = conn.cursor()
+
+    #grab balance from the user table
+    cursor.execute("SELECT usd_balance FROM users WHERE ID = ?", (user_id,))
+    result = cursor.fetchone()
+
+    #if user isn't in db
+    if result is None:
+        return "Error: User Does Not Exist!!"
+
+    usd_balance = result[0]
+
+    cursor.execute("SELECT first_name, last_name FROM users WHERE ID = ?", (user_id,))
+    name = cursor.fetchone()
+
+    return f"200 OK\nBalance for {name} is ${usd_balance} " #grab first name and last name from user through user_id
 
 #Souad
 def shutdown_command(clientsocket, serversocket, conn):
@@ -208,17 +227,20 @@ def shutdown_command(clientsocket, serversocket, conn):
     #exit program
     exit(0)
 
-    
-
 #Brooklyn
-def quit_command(comm):
-    data = "200 OK\n"
-    return (data)
+def quit_command(clientsocket):
+
+    #send confirmation msg to client
+    response = "200 OK\n"
+    clientsocket.sendall(response.encode())
+
+    #close client socket
+    clientsocket.close()
 
 
 
 #creating socket object which is ipv4 & uses TCP
-s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 s.bind((socket.gethostname(), 2323))
 s.listen()
@@ -275,11 +297,14 @@ while True:
             response = buy_command(conn, client_message)
         elif client_message.startswith("SELL"):
             response = sell_command(conn, client_message)
+        elif client_message.startswith("BALANCE"):
+            response = balance_command(conn, client_message)
         elif client_message.startswith("LIST"):
             response = list_command(conn, client_message)
         elif client_message.startswith("SHUTDOWN"):
             shutdown_command(clientsocket, s, conn)
-     #TODO:Need to add for the other commands!!!!!    
+        elif client_message.startswith("QUIT"):
+            quit_command(clientsocket)
         else:
          response = "Error: Invalid command."
    	 

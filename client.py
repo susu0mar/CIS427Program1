@@ -2,7 +2,7 @@
 import socket
 
 #creating socket object
-cs= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 #Chose random port number
 cs.connect((socket.gethostname(), 2323))
@@ -20,7 +20,7 @@ def recv_all(sock, delimiter = '/n'):
     #read data from socket
     while True:
         #recieve data in chunks
-        chunk =sock.recv(4096).decode('utf-8')
+        chunk = sock.recv(4096).decode('utf-8')
 
         #check if delimiter is in the chunk
         if delimiter in chunk:
@@ -41,9 +41,9 @@ def recv_all(sock, delimiter = '/n'):
 while True:
           # Prompt the user for a command
             command = input("Enter command (BUY, SELL, BALANCE, LIST, SHUTDOWN, QUIT): ").strip()
-            if command.upper() == "QUIT":  # If user enters QUIT, break the loop
-                print("Exiting the client.")
-                break
+            #if command.upper() == "QUIT":  # If user enters QUIT, break the loop
+            #    print("Exiting the client.")
+             #   break
 
             # Send the command to the server
             cs.sendall(command.encode())
