@@ -117,10 +117,44 @@ def buy_command(conn, command):
 
 
 #Brooklyn
-def sell_command(comm, stock_sym, stock_amo, prc, id):
-    data = "200 OK\n" + comm + " " + stock_sym + " " + stock_amo + "\ " + prc + " " + id + "\n"
-    print ("testing git")
-    return (data)
+def sell_command(conn, command):
+    _, stock_symbol, stock_amount, price_per_stock, user_id = command.split()
+
+    stock_amount = float(stock_amount)
+    price_per_stock = float(price_per_stock)
+    user_id = int(user_id)
+
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT usd_balance FROM users WHERE ID = ?", (user_id,))
+    result = cursor.fetchone()
+
+    #if user isn't in db
+    if result is None:
+        return "Error: User Does Not Exist!!"
+
+    usd_balance = result[0]
+    total_price = stock_amount * price_per_stock
+    
+    #Add price to user balance
+    new_usd_balance = usd_balance + total_price
+    #update the table
+    cursor.execute("UPDATE users SET usd_balance = ? WHERE ID = ?", (new_usd_balance, user_id))
+
+    #grab data from the stock table
+    cursor.execute("SELECT stock_balance FROM stocks WHERE user_id = ? AND stock_symbol = ?", (user_id, stock_symbol))
+    stock_result = cursor.fetchone()
+
+    if stock_result: #if the user already owns some of this stock
+        new_stock_balance = stock_result[0] + stock_amount
+        #update table 
+        cursor.execute("UPDATE stocks SET stock_balance = ? WHERE user_id = ? AND stock_symbol = ?", (new_stock_balance, user_id, stock_symbol))
+    else: 
+        return "ERROR: You don't own any of this stock"
+     #Commit all changes to the Database!
+    conn.commit()
+
+    return f"200 OK\nSOLD: New balance: {new_stock_balance} {stock_symbol}. USD balance ${new_usd_balance}"
 
 #Souad
 def list_command(comm):
@@ -198,6 +232,8 @@ while True:
    	 
     if client_message.startswith("BUY"):
         response = buy_command(conn, client_message)
+    elif client_message.startswith("SELL"):
+        response = sell_command(conn, client_message)
     #TODO:Need to add for the other commands!!!!!    
     else:
         response = "Error: Invalid command."
