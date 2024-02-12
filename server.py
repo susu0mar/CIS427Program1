@@ -306,7 +306,7 @@ while True:
         elif client_message.startswith("QUIT"):
             quit_command(clientsocket)
         else:
-         response = "Error: Invalid command."
+         response = "Error 400: Invalid command."
    	 
 
         # Send the response to the client
