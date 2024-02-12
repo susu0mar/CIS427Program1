@@ -53,9 +53,9 @@ while True:
             print(f"Server response: {response}")
 
             # If SHUTDOWN command is sent, break the loop (optional, depending on server's behavior)
-            if command.upper() == "SHUTDOWN":
-                print("Server is shutting down. Exiting the client.")
-                break
+           # if command.upper() == "SHUTDOWN":
+            #    print("Server is shutting down. Exiting the client.")
+            #    break
 
 #close connection
 cs.close()

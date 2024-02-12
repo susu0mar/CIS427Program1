@@ -190,9 +190,25 @@ def balance_command(comm):
     return (data)
 
 #Souad
-def shutdown_command(comm):
-    data = "200 OK\n" + comm + "\n"
-    return (data)
+def shutdown_command(clientsocket, serversocket, conn):
+
+    #send confirmation msg to client
+    response = "200 OK\n"
+    clientsocket.sendall(response.encode())
+
+    #close client socket
+    clientsocket.close()
+
+    #close server socket
+    serversocket.close()
+
+    #close db connection
+    conn.close()
+
+    #exit program
+    exit(0)
+
+    
 
 #Brooklyn
 def quit_command(comm):
@@ -261,6 +277,8 @@ while True:
             response = sell_command(conn, client_message)
         elif client_message.startswith("LIST"):
             response = list_command(conn, client_message)
+        elif client_message.startswith("SHUTDOWN"):
+            shutdown_command(clientsocket, s, conn)
      #TODO:Need to add for the other commands!!!!!    
         else:
          response = "Error: Invalid command."
@@ -271,3 +289,4 @@ while True:
 
     #close connection
     clientsocket.close()
+    
