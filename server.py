@@ -75,6 +75,9 @@ def buy_command(conn, command):
     price_per_stock = float(price_per_stock)
     user_id = int(user_id)
 
+    #initialize new stock balance
+    new_stock_balance = 0
+
     cursor = conn.cursor()
 
     #check to see if user exists in db
@@ -107,6 +110,7 @@ def buy_command(conn, command):
         cursor.execute("UPDATE stocks SET stock_balance = ? WHERE user_id = ? AND stock_symbol = ?", (new_stock_balance, user_id, stock_symbol))
     
     else: #user doesnt own any of this stock previously
+        new_stock_balance = stock_amount
         cursor.execute("INSERT INTO stocks (stock_symbol, stock_name, stock_balance, user_id) VALUES (?, ?, ?, ?)", (stock_symbol, stock_symbol, stock_amount, user_id))
 
 
@@ -177,34 +181,36 @@ def recv_all(sock, delimiter = '/n'):
         #Join all chunks into a string and remove delimiter
         return ''.join(data).rstrip(delimiter)
 
-count = 0 #use this var so that welcome message only sent once
+
 #this loop runs until a connection is established
 
 #FIXME: SERVER COMMAND RUNS ONLY ONCE, I THINK IT PREMATURLY CLOSES CAUSING CONNECTION ERROR
 while True:
-    clientsocket, address = s.accept()
+    clientsocket, address = s.accept() #I THINK THIS IS CAUSING THE 2ND COMMANDS NOT TO WORK (might add another while loop)
 
-    if count ==0:
-     count +=1
-     print(f"Connection from {address} Successfully Established")#message to check if connection worked
-     #sending string to client
     
-     message_welcome = "Welcome to this Stock Trading Program\n"
-     clientsocket.send(message_welcome.encode())
+    print(f"Connection from {address} Successfully Established")#message to check if connection worked
+    #sending string to client
+    
+    message_welcome = "Welcome to this Stock Trading Program\n"
+    clientsocket.send(message_welcome.encode())
     
     #Receive a command from the client
-    client_message = recv_all(clientsocket)
-    print(f"Received command from client: {client_message}")
+     
+    #MAYBE HAVE A SECOND WHILE TRUE LOOP BCS accept is a blocking function, it keeps rerunning so that migh be the issue
+    while True:
+        client_message = recv_all(clientsocket)
+        print(f"Received command from client: {client_message}")
    	 
-    if client_message.startswith("BUY"):
-        response = buy_command(conn, client_message)
-    #TODO:Need to add for the other commands!!!!!    
-    else:
-        response = "Error: Invalid command."
+        if client_message.startswith("BUY"):
+            response = buy_command(conn, client_message)
+     #TODO:Need to add for the other commands!!!!!    
+        else:
+         response = "Error: Invalid command."
    	 
 
-    # Send the response to the client
-    clientsocket.sendall(response.encode())
+        # Send the response to the client
+        clientsocket.sendall(response.encode())
 
-#close connection
-clientsocket.close()
+    #close connection
+    clientsocket.close()

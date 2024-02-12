@@ -37,7 +37,7 @@ def recv_all(sock, delimiter = '/n'):
         return ''.join(data).rstrip(delimiter)
 
 
-#Seems like this block isn't running?? but for some reason 
+#Seems like this block isn't running?? but for some reason  (UPDATE I THINK IT DOES, I THINK ITS SERVER ISSUE)
 while True:
           # Prompt the user for a command
             command = input("Enter command (BUY, SELL, BALANCE, LIST, SHUTDOWN, QUIT): ").strip()
