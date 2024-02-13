@@ -9,6 +9,13 @@ import sqlite3
 # Connect to SQLite database
 with sqlite3.connect('stock_trading_system.db') as conn:
     cursor = conn.cursor() #create a cursor object to execute SQL commands
+    
+    #RESET THE DATA OF DB (KEEP CODE COMMENTED UNLESS YOU WANT TO RESET DATA)
+    #Drop existing tables
+
+   # cursor.execute('DROP TABLE IF EXISTS stocks;') 
+   # cursor.execute('DROP TABLE IF EXISTS users;')
+
 
     # Create users table (from professors example)
     cursor.execute('''
@@ -46,7 +53,8 @@ with sqlite3.connect('stock_trading_system.db') as conn:
 #cursor.executescript("""
 #INSERT INTO users (email, first_name, last_name, user_name, password, usd_balance) VALUES
 #('john.doe@example.com', 'John', 'Doe', 'johndoe', 'password123', 1000.00),
-#('jane.smith@example.com', 'Jane', 'Smith', 'janesmith', 'password123', 1500.00);
+#('jane.smith@example.com', 'Jane', 'Smith', 'janesmith', 'password123', 1500.00),
+#('alex.jones@example.com', 'Alex', 'Jones', 'alexjones', 'password123', 5.00);
 #""")
 
 #insert initial data for stocks
