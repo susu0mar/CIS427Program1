@@ -90,14 +90,14 @@ def buy_command(conn, command):
 
     #if user isn't in db
     if result is None:
-        return "Error: User Does Not Exist!!"
+        return "Error: User Does Not Exist!!\n"
     
     usd_balance = result[0]
     total_price = stock_amount *price_per_stock
 
     #check if user has enough balance
     if usd_balance <total_price:
-        return "Error: Not Enough Balance!!"
+        return "Error: Not Enough Balance!!\n"
     
     #Deduct price from user balance
     new_usd_balance = usd_balance - total_price
@@ -153,12 +153,15 @@ def sell_command(conn, command):
     cursor.execute("SELECT stock_balance FROM stocks WHERE user_id = ? AND stock_symbol = ?", (user_id, stock_symbol))
     stock_result = cursor.fetchone()
 
-    if stock_result: #if the user already owns some of this stock
+    if stock_result and stock_result[0] >= stock_amount: #if the user already owns some of this stock
         new_stock_balance = stock_result[0] - stock_amount
         #update table 
         cursor.execute("UPDATE stocks SET stock_balance = ? WHERE user_id = ? AND stock_symbol = ?", (new_stock_balance, user_id, stock_symbol))
+    elif stock_result and stock_result[0] < stock_amount: #if user owns some stock but not enough to sell
+        print(f"Debug Message: Not enough stock to sell")
+        return "ERROR: Not enough stock to sell\n"
     else: 
-        return "ERROR: You don't own any of this stock"
+        return "ERROR: You don't own any of this stock\n"
      #Commit all changes to the Database!
     conn.commit()
 
