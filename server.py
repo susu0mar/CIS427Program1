@@ -61,10 +61,6 @@ with sqlite3.connect('stock_trading_system.db') as conn:
 #conn.commit()
 #print("Initial data added successfully")
 
-
-
-#TODO: Need to Figure out how to add to database based on different client commands
-
     
 #Souad
 def buy_command(conn, command):
@@ -150,7 +146,7 @@ def sell_command(conn, command):
     stock_result = cursor.fetchone()
 
     if stock_result: #if the user already owns some of this stock
-        new_stock_balance = stock_result[0] + stock_amount
+        new_stock_balance = stock_result[0] - stock_amount
         #update table 
         cursor.execute("UPDATE stocks SET stock_balance = ? WHERE user_id = ? AND stock_symbol = ?", (new_stock_balance, user_id, stock_symbol))
     else: 
@@ -212,7 +208,7 @@ def balance_command(conn, command):
 def shutdown_command(clientsocket, serversocket, conn):
 
     #send confirmation msg to client
-    response = "200 OK\n"
+    response = "200 OK\nSERVER SHUTDOWN\n"
     clientsocket.sendall(response.encode())
 
     #close client socket
@@ -248,7 +244,7 @@ s.listen()
 
 #defining method to recieve data from client
 
-def recv_all(sock, delimiter = '/n'):
+def recv_all(sock, delimiter = '\n'):
     #have empty list to hold all chunks of data
     data = []
 
@@ -256,7 +252,7 @@ def recv_all(sock, delimiter = '/n'):
     #read data from socket
     while True:
         #recieve data in chunks
-        chunk =sock.recv(4096).decode('utf-8')
+        chunk =sock.recv(4096).decode()
 
         #check if delimiter is in the chunk
         if delimiter in chunk:
@@ -275,9 +271,8 @@ def recv_all(sock, delimiter = '/n'):
 
 #this loop runs until a connection is established
 
-#FIXME: SERVER COMMAND RUNS ONLY ONCE, I THINK IT PREMATURLY CLOSES CAUSING CONNECTION ERROR
 while True:
-    clientsocket, address = s.accept() #I THINK THIS IS CAUSING THE 2ND COMMANDS NOT TO WORK (might add another while loop)
+    clientsocket, address = s.accept() 
 
     
     print(f"Connection from {address} Successfully Established")#message to check if connection worked
@@ -306,7 +301,8 @@ while True:
         elif client_message.startswith("QUIT"):
             quit_command(clientsocket)
         else:
-         response = "Error 400: Invalid command."
+         response = "Error 400: Invalid command.\n"
+         #print(f"Sending response to client: {response}")  # Debug print
    	 
 
         # Send the response to the client

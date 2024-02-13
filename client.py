@@ -12,7 +12,7 @@ welcome_message = cs.recv(4096).decode()
 print(welcome_message)
 
 #method to recieve all data from server (same definiton in both files!!)
-def recv_all(sock, delimiter = '/n'):
+def recv_all(sock, delimiter = '\n'):
     #have empty list to hold all chunks of data
     data = []
 
@@ -20,7 +20,7 @@ def recv_all(sock, delimiter = '/n'):
     #read data from socket
     while True:
         #recieve data in chunks
-        chunk =sock.recv(4096).decode('utf-8')
+        chunk =sock.recv(4096).decode()
 
         #check if delimiter is in the chunk
         if delimiter in chunk:
@@ -34,16 +34,16 @@ def recv_all(sock, delimiter = '/n'):
             data.append(chunk)
         
         
-    #Join all chunks into a string and remove delimiter     
+    #Join all chunks into a string and remove delimiter
     return ''.join(data).rstrip(delimiter)
 
 
-
+#FIXME: For some reason, SHUTDOWN closes server side but the TRUE loop doesn't break
 while True:
           # Prompt the user for a command
             command = input("Enter command (BUY, SELL, BALANCE, LIST, SHUTDOWN, QUIT): ").strip()
             if command.upper() == "QUIT":  # If user enters QUIT, break the loop
-                print("Exiting the client.")
+                print("Exiting the client. :)")
                 break
 
             # Send the command to the server
@@ -53,15 +53,22 @@ while True:
             response = recv_all(cs)
             print(f"Server response: {response}")
 
-            #TODO: SHUTDOWN Works on server side (bcs exit) but client side is kinda buggy with shutdown, 
-            #(it doesn't exit, need to figure out a way to close client as well)
-            # If SHUTDOWN command is sent, break the loop (optional, depending on server's behavior)
-            if command.upper() == "SHUTDOWN":
-                print("Server is shutting down. Exiting the client.")
+            #Check to see if response contains the shutdown message (From shutdown function)
+            if "SERVER SHUTDOWN" in response:
+                print("Exiting the client.")
                 break
+
+            # If SHUTDOWN command is sent, break the loop (optional, depending on server's behavior)
+           # if command.upper() == "SHUTDOWN":
+           #     print("Server is shutting down. Exiting the client.")
+           #     cs.close()
+           #     break
 
 #close connection
 cs.close()
+
+
+
 
 
 
