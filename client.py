@@ -38,13 +38,11 @@ def recv_all(sock, delimiter = '\n'):
     return ''.join(data).rstrip(delimiter)
 
 
-#FIXME: For some reason, SHUTDOWN closes server side but the TRUE loop doesn't break
+
 while True:
           # Prompt the user for a command
             command = input("Enter command (BUY, SELL, BALANCE, LIST, SHUTDOWN, QUIT): ").strip()
-            if command.upper() == "QUIT":  # If user enters QUIT, break the loop
-                print("Exiting the client. :)")
-                break
+            
 
             # Send the command to the server
             cs.sendall(command.encode())
@@ -53,16 +51,16 @@ while True:
             response = recv_all(cs)
             print(f"Server response: {response}")
 
+            if command.upper() == "QUIT":  # If user enters QUIT, break the loop
+                print("Exiting the client. :)")
+                break
+            
             #Check to see if response contains the shutdown message (From shutdown function)
             if "SERVER SHUTDOWN" in response:
                 print("Exiting the client.")
                 break
 
-            # If SHUTDOWN command is sent, break the loop (optional, depending on server's behavior)
-           # if command.upper() == "SHUTDOWN":
-           #     print("Server is shutting down. Exiting the client.")
-           #     cs.close()
-           #     break
+           
 
 #close connection
 cs.close()

@@ -3,7 +3,6 @@ import socket
 #Use sqlite3 library to create simple db for stocks
 import sqlite3
 
-#IF DB doesn't work, worst case just use .txt files instead
 
 
 # Connect to SQLite database
@@ -158,7 +157,7 @@ def sell_command(conn, command):
         #update table 
         cursor.execute("UPDATE stocks SET stock_balance = ? WHERE user_id = ? AND stock_symbol = ?", (new_stock_balance, user_id, stock_symbol))
     elif stock_result and stock_result[0] < stock_amount: #if user owns some stock but not enough to sell
-        print(f"Debug Message: Not enough stock to sell")
+       # print(f"Debug Message: Not enough stock to sell")
         return "ERROR: Not enough stock to sell\n"
     else: 
         return "ERROR: You don't own any of this stock\n"
@@ -294,7 +293,6 @@ while True:
     
     #Receive a command from the client
      
-    #MAYBE HAVE A SECOND WHILE TRUE LOOP BCS accept is a blocking function, it keeps rerunning so that migh be the issue
     while True:
         client_message = recv_all(clientsocket)
         print(f"Received command from client: {client_message}")
@@ -311,6 +309,7 @@ while True:
             shutdown_command(clientsocket, s, conn)
         elif client_message.startswith("QUIT"):
             quit_command(clientsocket)
+            break
         else:
          response = "Error 400: Invalid command.\n"
          #print(f"Sending response to client: {response}")  # Debug print
