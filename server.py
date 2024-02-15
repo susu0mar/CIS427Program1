@@ -42,13 +42,15 @@ with sqlite3.connect('stock_trading_system.db') as conn:
     ''')
 
     conn.commit()
-#
-# ALREADY DONE WITH INITIAL DATA, KEEP IT COMMENTED OUT (DATA SAVES IN DB AFTER RUN TIME) 
+
+#INITIAL DATA LOADING, COMMENT THIS OUT ONCE DB IS CREATED ONCE
 
 #Adding initial data to db
+    
 #cursor = conn.cursor()
 
 # Insert initial data for users
+    
 #cursor.executescript("""
 #INSERT INTO users (email, first_name, last_name, user_name, password, usd_balance) VALUES
 #('john.doe@example.com', 'John', 'Doe', 'johndoe', 'password123', 1000.00),
@@ -57,6 +59,7 @@ with sqlite3.connect('stock_trading_system.db') as conn:
 #""")
 
 #insert initial data for stocks
+    
 #cursor.executescript("""
 #INSERT INTO stocks (stock_symbol, stock_name, stock_balance, user_id) VALUES
 #('AAPL', 'Apple Inc.', 10, 1),
